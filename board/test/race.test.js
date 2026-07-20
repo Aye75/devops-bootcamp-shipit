@@ -61,14 +61,27 @@ test('reset returns to idle and zeroes racers but keeps them joined', () => {
   assert.equal(r.snapshot().ships[0].completed, 0);
 });
 
-test('total stays the configured cap across rounds of differing length', () => {
+test('total follows the prompt list across rounds of differing length', () => {
   const r = new Race({ total: 3 });
-  r.start(prompts(2));            // fewer than the cap
-  assert.equal(r.total, 3);
+  r.start(prompts(2));
+  assert.equal(r.total, 2);
   r.reset();
-  r.start(prompts(5)); // more than the cap
-  assert.equal(r.total, 3);
-  assert.equal(r.prompts.length, 3);  // clamped to the cap
+  r.start(prompts(5));
+  assert.equal(r.total, 5);
+  assert.equal(r.prompts.length, 5);
+  r.reset();
+  r.start([]);                    // empty list keeps the previous total
+  assert.equal(r.total, 5);
+});
+
+test('finish keys off the dynamic total', () => {
+  const r = new Race({ total: 12 });
+  r.join('a');
+  r.start(prompts(2));
+  r.progress('a', 1);
+  assert.equal(r.phase, 'running');
+  r.progress('a', 2);
+  assert.equal(r.phase, 'finished');
 });
 
 test('report stores clamped frac without advancing', () => {

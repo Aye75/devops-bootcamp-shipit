@@ -73,7 +73,7 @@ export function createServer({ port = 3000, token = null, operatorKey = null, pu
           const s = body.session ? String(body.session) : session;
           if (!SESSIONS[s]) return json(res, 400, { error: 'unknown session' });
           session = s;
-          race.start(pickPrompts(session, race.total));
+          race.start(pickPrompts(session));
           raceDirty = true;
           return json(res, 202, { ok: true });
         });

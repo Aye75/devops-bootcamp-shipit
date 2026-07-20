@@ -19,7 +19,10 @@ export class Race {
   }
 
   start(prompts) {
-    this.prompts = prompts.slice(0, this.total);
+    // The story sets the distance: total follows the prompt list (empty list
+    // keeps the configured default so progress math never divides by zero).
+    this.prompts = prompts.slice();
+    if (this.prompts.length) this.total = this.prompts.length;
     this.phase = 'running';
     this._seq = 0;
     for (const r of this.racers.values()) { r.completed = 0; r.finishedAt = null; r.frac = 0; }
