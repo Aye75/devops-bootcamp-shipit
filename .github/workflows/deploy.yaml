@@ -1,5 +1,6 @@
 name: deploy
-on: [push, workflow_dispatch]
+test:
+    if: github.event.pull_request.merged == false   # tambah
 defaults:
   run:
     working-directory: launchpad
@@ -17,12 +18,15 @@ jobs:
           SHIPIT_TOKEN: ${{ secrets.SHIPIT_TOKEN }}
   deploy:
     needs: test
+    if: always() && github.event.pull_request.merged == true   # tambahgit checkout -b add-url
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
       - run: npm clean-install
       - run: npm run build
+      env:
+          VITE_BOARD_URL: ${{ vars.BOARD_URL }}
       - uses: actions/upload-pages-artifact@v5
         with:
           path: launchpad/dist
