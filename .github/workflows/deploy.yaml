@@ -1,11 +1,14 @@
-name: deploy
-test:
-    if: github.event.pull_request.merged == false   # tambah
+name: cicd
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
 defaults:
   run:
     working-directory: launchpad
+
 jobs:
   test:
+    if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -18,7 +21,7 @@ jobs:
           SHIPIT_TOKEN: ${{ secrets.SHIPIT_TOKEN }}
   deploy:
     needs: test
-    if: always() && github.event.pull_request.merged == true   # tambahgit checkout -b add-url
+    if: always() && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -27,10 +30,12 @@ jobs:
       - run: npm run build
         env:
           VITE_BOARD_URL: ${{ vars.BOARD_URL }}
+          VITE_CALLSIGN: ${{ github.actor }}
       - uses: actions/upload-pages-artifact@v5
         with:
           path: launchpad/dist
       - uses: actions/deploy-pages@v5
+
 permissions:
   pages: write
   id-token: write
