@@ -12,10 +12,10 @@ jobs:
       - run: npm clean-install
       - run: npm run test
       - run : npm run build
-      - run: bash scripts/report.sh
-        env:
-          BOARD_URL: ${{ vars.BOARD_URL }}
-          SHIPIT_TOKEN: ${{ secrets.SHIPIT_TOKEN }}
+      #- run: bash scripts/report.sh
+        #env:
+          #BOARD_URL: ${{ vars.BOARD_URL }}
+          #SHIPIT_TOKEN: ${{ secrets.SHIPIT_TOKEN }}
   deploy:
     needs: test
     runs-on: ubuntu-latest
